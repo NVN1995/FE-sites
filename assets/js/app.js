@@ -1,12 +1,5 @@
-// Force page scroll to top at page refresh
-{
-  window.onload = () => {
-    document.body.scrollTop = document.documentElement.scrollTop = 0;
-  };
-}
-
 // Show, hide ticket modal
-{
+function ticketModal() {
   const buyBtns = document.querySelectorAll(".js-buy-btn");
   const ticketModal = document.querySelector(".js-ticket-modal");
   const ticketModalClose = document.querySelector(".js-ticket-modal-close");
@@ -47,7 +40,7 @@
 }
 
 // =========>>>>>>> Click Show/hide menu + subMenu <<<<<======
-{
+function sMenuControl() {
   // query s-menu-btn, header height
   var sMenuBtn = document.querySelector(".js-s-menu-btn");
   var header = document.querySelector(".js-header");
@@ -123,7 +116,7 @@
 }
 
 // Show/hide menuBar when scroll
-{
+function menuBarScroll() {
   var navBar = document.querySelector(".js-header");
   let lastScrollY = window.scrollY;
 
@@ -144,9 +137,15 @@
   });
 }
 
-// light Box for member-image
-{
-  // get all image
+function gotoTopPage() {
+  document.body.scrollTop = document.documentElement.scrollTop = 0;
+}
+
+function lightbox() {
+  // disable this script on mobile
+  if (window.innerWidth < 740) {
+    return;
+  }
   const gallery = document.querySelectorAll(
     ".js-info-member .js-member-avatar"
   );
@@ -156,79 +155,81 @@
   // get img tag inside previewBox
   const previewImage = previewBox.querySelector(".preview-image img");
 
-  window.onload = () => {
-    // disable this script on mobile
-    if (window.innerWidth < 740) {
-      return;
-    }
-    for (let i = 0; i < gallery.length; i++) {
-      let newIndex = i;
-      let clickImageIndex;
-      gallery[newIndex].onclick = () => {
-        // get newIndex to ClickImageIndex -> after click we will reset newIndex
-        clickImageIndex = newIndex;
-        // function get image url for previewBox on each 'click'
-        function preview() {
-          let selectedImageUrl = gallery[newIndex].src;
-          previewImage.src = selectedImageUrl;
-        }
+  for (let i = 0; i < gallery.length; i++) {
+    let newIndex = i;
+    let clickImageIndex;
+    gallery[newIndex].onclick = () => {
+      // get newIndex to ClickImageIndex -> after click we will reset newIndex
+      clickImageIndex = newIndex;
+      // function get image url for previewBox on each 'click'
+      function preview() {
+        let selectedImageUrl = gallery[newIndex].src;
+        previewImage.src = selectedImageUrl;
+      }
 
-        // get previous + next button
-        const prevBtn = document.querySelector(".js-prev-btn");
-        const nextBtn = document.querySelector(".js-next-btn");
+      // get previous + next button
+      const prevBtn = document.querySelector(".js-prev-btn");
+      const nextBtn = document.querySelector(".js-next-btn");
 
-        // default hide previous button when cick on first image
+      // default hide previous button when cick on first image
+      if (newIndex == 0) {
+        prevBtn.style.display = "none";
+      }
+      // default hide next button when cick on last image
+      if (newIndex == gallery.length - 1) {
+        nextBtn.style.display = "none";
+      }
+
+      // when click on previous button
+      prevBtn.onclick = () => {
+        newIndex--;
+        // if is first img
         if (newIndex == 0) {
+          // update previewImage url (avoid hiding previous button but not show first image)
+          preview();
           prevBtn.style.display = "none";
-        }
-        // default hide next button when cick on last image
-        if (newIndex == gallery.length - 1) {
-          nextBtn.style.display = "none";
-        }
-
-        // when click on previous button
-        prevBtn.onclick = () => {
-          newIndex--;
-          // if is first img
-          if (newIndex == 0) {
-            // update previewImage url (avoid hiding previous button but not show first image)
-            preview();
-            prevBtn.style.display = "none";
-          } else {
-            preview();
-            // show next button
-            nextBtn.style.display = "block";
-          }
-        };
-
-        nextBtn.onclick = () => {
-          newIndex++;
-          // if is last img
-          if (newIndex == gallery.length - 1) {
-            // update previewImage url (avoid hiding previous button but not show first image)
-            preview();
-            nextBtn.style.display = "none";
-          } else {
-            // show next button
-            preview();
-            prevBtn.style.display = "block";
-          }
-        };
-
-        preview();
-
-        // show light Box
-        previewBox.classList.add("show");
-
-        // when click on close button
-        previewCloseIcon.onclick = () => {
-          // reset newIndex, previous button, next button, hide light Box
-          newIndex = clickImageIndex;
-          prevBtn.style.display = "block";
+        } else {
+          preview();
+          // show next button
           nextBtn.style.display = "block";
-          previewBox.classList.remove("show");
-        };
+        }
       };
-    }
-  };
+
+      nextBtn.onclick = () => {
+        newIndex++;
+        // if is last img
+        if (newIndex == gallery.length - 1) {
+          // update previewImage url (avoid hiding previous button but not show first image)
+          preview();
+          nextBtn.style.display = "none";
+        } else {
+          // show next button
+          preview();
+          prevBtn.style.display = "block";
+        }
+      };
+
+      preview();
+
+      // show light Box
+      previewBox.classList.add("show");
+
+      // when click on close button
+      previewCloseIcon.onclick = () => {
+        // reset newIndex, previous button, next button, hide light Box
+        newIndex = clickImageIndex;
+        prevBtn.style.display = "block";
+        nextBtn.style.display = "block";
+        previewBox.classList.remove("show");
+      };
+    };
+  }
 }
+
+window.onload = () => {
+  gotoTopPage();
+  sMenuControl();
+  menuBarScroll();
+  lightbox();
+  ticketModal();
+};
